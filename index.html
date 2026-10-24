@@ -76,7 +76,7 @@ input[type=text]+.mic{top:50%;bottom:auto;transform:translateY(-50%);width:2.6re
 .btn.micbig{background:var(--card);color:var(--pri-d);border:3px solid var(--pri);margin-top:10px;min-height:3.4rem}
 .btn.micbig.on{background:var(--rec);border-color:var(--rec);color:#fff;animation:pulse 1.2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,58,43,.5)}70%{box-shadow:0 0 0 14px rgba(217,58,43,0)}100%{box-shadow:0 0 0 0 rgba(217,58,43,0)}}
-.listening{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--rec);color:#fff;font-weight:800;border-radius:999px;padding:8px 18px;z-index:70;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.listening{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--rec);color:#fff;font-weight:800;border-radius:999px;padding:8px 18px;z-index:70;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 label.f{display:flex;align-items:center;gap:8px;font-weight:800;margin:16px 0 6px;font-size:1.05rem}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
 .chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:700}
@@ -1129,6 +1129,7 @@ function setMicUI(k, on) {
     else b.textContent = on ? '⏹️ Bas, ruk jaiye' : (b.dataset.label || b.textContent);
   });
   $('listening').classList.toggle('hidden', !on);
+  if (on) $('listening').textContent = '🔴 Sun rahe hain… boliye';
 }
 document.querySelectorAll('.btn.micbig').forEach(b => { b.dataset.label = b.textContent; });
 document.addEventListener('click', e => {
@@ -1138,35 +1139,61 @@ document.addEventListener('click', e => {
   if (rec && recKey === k) { stopMic(); return; }
   startMic(k);
 });
+/* Speech text joining.
+   Android Chrome often re-sends the same sentence growing ("aaj", "aaj mera", "aaj mera din"),
+   and repeats the last words when listening restarts. These helpers merge such text cleanly. */
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const normW = w => w.toLowerCase().replace(/[.,!?।"'“”]/g, '');
+function joinWords(a, b) {
+  a = (a || '').trim(); b = (b || '').trim();
+  if (!a) return b; if (!b) return a;
+  const A = a.split(/\s+/), B = b.split(/\s+/);
+  const nb = B.map(normW).join(' '), na = A.map(normW).join(' ');
+  if (nb === na || nb.startsWith(na + ' ')) return b;   // new text already includes old
+  if (na.endsWith(' ' + nb)) return a;                   // new text is a repeat of the end
+  for (let k = Math.min(8, A.length, B.length); k >= 1; k--) {   // overlap at the joint
+    if (k === 1 && normW(B[0]).length < 4) break;        // keep real short repeats ("dheere dheere" stays)
+    if (A.slice(-k).map(normW).join(' ') === B.slice(0, k).map(normW).join(' ')) return A.concat(B.slice(k)).join(' ');
+  }
+  return a + ' ' + b;
+}
+let micIdle = 0;
 function startMic(k) {
   stopMic(); stopRec();
   if (!SR) { showMicHelp(); return; }
   const el = document.querySelector(`#scrEntry [data-k="${k}"]`);
-  let base = el.value ? el.value.replace(/\s*$/, ' ') : '';
-  let finals = [];
+  let committed = el.value.trim();      // text already in the box
+  let session = '', heard = false;
+  micIdle = 0;
   const r = new SR();
-  r.lang = 'hi-IN'; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
-  r.onresult = ev => {
-    let interim = '';
-    for (let i = ev.resultIndex; i < ev.results.length; i++) {
-      const t = ev.results[i][0].transcript.trim();
-      if (!t) continue;
-      if (ev.results[i].isFinal) {
-        const lastF = finals[finals.length - 1];
-        if (lastF && t.indexOf(lastF) === 0) finals[finals.length - 1] = t;   // some Android phones repeat text
-        else if (t !== lastF) finals.push(t);
-      } else interim = t;
-    }
-    el.value = base + conv(finals.join(' ')) + (interim ? ' ' + conv(interim) : '');
+  r.lang = 'hi-IN'; r.interimResults = true; r.maxAlternatives = 1;
+  r.continuous = !IS_ANDROID;           // Android: one sentence at a time is far more reliable
+  const paint = interim => {
+    el.value = joinWords(committed, conv(joinWords(session, interim)));
     S[k] = el.value; saveDraft();
+    const live = interim || session;
+    $('listening').textContent = live ? '🔴 ' + conv(live).split(/\s+/).slice(-6).join(' ') : '🔴 Sun rahe hain… boliye';
+  };
+  r.onresult = ev => {
+    let fin = '', interim = '';
+    for (let i = 0; i < ev.results.length; i++) {          // rebuild from ALL results every time
+      const t = (ev.results[i][0].transcript || '').trim();
+      if (!t) continue;
+      if (ev.results[i].isFinal) fin = joinWords(fin, t); else interim = joinWords(interim, t);
+    }
+    session = fin; heard = heard || !!(fin || interim);
+    paint(interim);
   };
   r.onerror = ev => {
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed' || ev.error === 'audio-capture') { recWant = false; showMicHelp(); }
     else if (ev.error === 'network') { recWant = false; toast('Bolkar likhne ke liye internet chahiye.'); }
   };
   r.onend = () => {
+    committed = joinWords(committed, conv(session)); session = '';
+    el.value = committed; S[k] = committed; saveDraft();
+    micIdle = heard ? 0 : micIdle + 1; heard = false;
     if (recWant && rec === r) {
-      base = el.value ? el.value.replace(/\s*$/, ' ') : ''; finals = [];
+      if (micIdle >= 3) { stopMic(); toast('Kuch sunai nahi diya — mic band. Dobara 🎤 dabaiye.'); return; }
       try { r.start(); return; } catch (err) { /* fall through */ }
     }
     if (rec === r) { rec = null; recKey = ''; setMicUI(k, false); }
