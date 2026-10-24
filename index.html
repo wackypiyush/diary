@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="hi-Latn">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#C8642B">
+<title>Meri Diary</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF6EE; --card:#FFFFFF; --field:#FFFFFF; --ink:#2A2622; --soft:#6E645B; --line:#EADFCF;
+  --pri:#C8642B; --pri-d:#9E4A1C; --pri-l:#FCE7D7; --pri-b:#F0D2BC;
+  --ok:#2F7D5B; --ok-l:#DFF1E7; --warn:#B3261E; --warn-l:#FDE3E1; --rec:#D93A2B;
+  --muted:#F6EEE2; --muted2:#EFE4D4; --mem:#FFF3E3; --mem-b:#F2D9B9; --empty:#B6A894;
+  --gl:#E3F2FA; --gb:#CFE3EE; --gon:#4A9CC7; --fest:#E7A93C; --fest-l:#FFF1D6;
+  --overlay:rgba(251,246,238,.93); --shadow:var(--shadow);
+  color-scheme:light;
+}
+html[data-theme=dark]{
+  --bg:#191512; --card:#241E1A; --field:#2C2521; --ink:#F3EAE0; --soft:#B8AA9C; --line:#3B312A;
+  --pri:#E0783A; --pri-d:#F4A774; --pri-l:#43301F; --pri-b:#5A3E28;
+  --ok:#5CC08F; --ok-l:#1E3A2C; --warn:#FF8A80; --warn-l:#4A2522; --rec:#E5483A;
+  --muted:#2E2622; --muted2:#352C27; --mem:#32261C; --mem-b:#4A3626; --empty:#7C6F63;
+  --gl:#1D3441; --gb:#2C4554; --gon:#5FB2DE; --fest:#E9B04A; --fest-l:#3A2E17;
+  --overlay:rgba(25,21,18,.93); --shadow:rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+html{font-size:19px}
+html.big{font-size:22px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,-apple-system,sans-serif;font-size:1rem;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding:18px 16px 140px}
+h1{font-size:1.45rem;line-height:1.2;margin:2px 0 4px;font-weight:800}
+h2{font-size:1.3rem;line-height:1.25;margin:4px 0 6px;font-weight:800}
+h3{font-size:1.05rem;margin:0 0 8px;font-weight:800}
+.sub{color:var(--soft);font-size:.9rem;margin:0 0 16px}
+.hint{color:var(--soft);font-size:.8rem;margin:-4px 0 8px}
+.card{background:var(--card);border-radius:18px;padding:16px;box-shadow:0 1px 0 var(--line),0 8px 22px var(--shadow);margin-bottom:14px}
+.hidden{display:none!important}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:3rem;border:0;border-radius:16px;font-weight:800;font-size:1.05rem;background:var(--pri);color:#fff;padding:0 14px}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--pri-d);border:2px solid var(--pri-b)}
+.btn.light{background:var(--pri-l);color:var(--pri-d)}
+.btn.green{background:var(--ok)}
+.btn.small{min-height:2.4rem;font-size:.85rem;width:auto;padding:0 12px;white-space:nowrap}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+
+/* tiles */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.grid.g3{grid-template-columns:repeat(3,1fr)}
+.grid.g4{grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{background:var(--card);border:3px solid var(--line);border-radius:16px;padding:10px 4px;text-align:center;font-weight:700;min-height:4.6rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:.85rem;line-height:1.15}
+.tile .em{font-size:1.9rem;line-height:1}
+.g4 .tile{min-height:4.2rem;font-size:.72rem;padding:8px 2px}
+.g4 .tile .em{font-size:1.5rem}
+.tile.on{border-color:var(--pri);background:var(--pri-l)}
+.pills{display:flex;gap:10px}
+.pill{flex:1;min-height:3.2rem;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;font-size:1.05rem}
+.pill.on{border-color:var(--pri);background:var(--pri-l)}
+.q{background:var(--card);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 1px 0 var(--line)}
+
+/* inputs + mic */
+.fld{position:relative;margin-bottom:6px}
+textarea,input[type=text]{width:100%;font:inherit;font-size:1rem;padding:12px 64px 12px 14px;border:2px solid var(--line);border-radius:14px;background:var(--field);color:var(--ink)}
+textarea{min-height:6.5rem;resize:vertical}
+textarea:focus,input[type=text]:focus{outline:none;border-color:var(--pri)}
+.mic{position:absolute;right:6px;bottom:6px;width:3rem;height:3rem;border-radius:50%;border:0;background:var(--pri-l);font-size:1.4rem;display:flex;align-items:center;justify-content:center}
+input[type=text]+.mic{top:50%;bottom:auto;transform:translateY(-50%);width:2.6rem;height:2.6rem;font-size:1.2rem}
+.mic.on{background:var(--rec);color:#fff;animation:pulse 1.2s infinite}
+.btn.micbig{background:var(--card);color:var(--pri-d);border:3px solid var(--pri);margin-top:10px;min-height:3.4rem}
+.btn.micbig.on{background:var(--rec);border-color:var(--rec);color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,58,43,.5)}70%{box-shadow:0 0 0 14px rgba(217,58,43,0)}100%{box-shadow:0 0 0 0 rgba(217,58,43,0)}}
+.listening{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--rec);color:#fff;font-weight:800;border-radius:999px;padding:8px 18px;z-index:70;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+label.f{display:flex;align-items:center;gap:8px;font-weight:800;margin:16px 0 6px;font-size:1.05rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;font-size:.85rem;font-weight:700}
+.chip.same{border-color:var(--ok);color:var(--ok);background:var(--ok-l)}
+.chip:active{background:var(--pri-l);border-color:var(--pri)}
+
+/* bars */
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.iconbtn{width:2.6rem;height:2.6rem;border-radius:50%;border:0;background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--line);font-size:1.15rem;flex:none}
+.progress{flex:1}
+.progress .lbl{font-size:.8rem;color:var(--soft);font-weight:700;margin-bottom:4px}
+.bar{height:10px;background:var(--muted2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--pri);border-radius:99px;transition:width .25s}
+.savetop{border:0;background:var(--ok-l);color:var(--ok);font-weight:800;border-radius:999px;padding:8px 12px;font-size:.85rem;flex:none}
+.bottombar{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(to top,var(--bg) 75%,transparent);padding:18px 16px calc(14px + env(safe-area-inset-bottom));z-index:20}
+.bottombar .inner{max-width:560px;margin:0 auto;display:flex;gap:12px}
+.bottombar .btn.ghost{flex:0 0 38%;white-space:nowrap;font-size:.95rem;padding:0 8px}
+
+/* home */
+.hello{font-size:.9rem;color:var(--soft);font-weight:700;margin:0}
+.homehead{display:flex;align-items:flex-start;gap:10px}
+.homehead>div{flex:1}
+.today-card{background:linear-gradient(135deg,#E9813F,#C8642B);color:#fff;border-radius:22px;padding:20px;margin:14px 0}
+.today-card h2{color:#fff;margin:0 0 4px}
+.today-card p{margin:0 0 14px;opacity:.95}
+.today-card .btn{background:#fff;color:#9E4A1C}
+.today-card .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+.streak{display:inline-block;background:rgba(255,255,255,.22);border-radius:999px;padding:3px 10px;font-weight:800;font-size:.8rem;margin-bottom:8px}
+.memory{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:var(--mem);color:var(--ink);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 1px 0 var(--mem-b)}
+.memory .th{width:4.2rem;height:4.2rem;border-radius:14px;background:var(--mem-b);flex:none;display:flex;align-items:center;justify-content:center;font-size:2rem;overflow:hidden}
+.memory .th img{width:100%;height:100%;object-fit:cover}
+.memory .k{font-size:.75rem;font-weight:800;color:var(--pri-d);text-transform:uppercase;letter-spacing:.04em}
+.memory .s{font-size:.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{background:var(--muted);border-radius:14px;padding:10px}
+.stat b{display:block;font-size:1.25rem}
+.stat span{font-size:.8rem;color:var(--soft);font-weight:700}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .wd{font-size:.62rem;font-weight:800;color:var(--soft);padding-bottom:2px}
+.cal .dc{aspect-ratio:1;border-radius:12px;border:0;background:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--soft);padding:0}
+.cal .dc .e{font-size:1.15rem;line-height:1}
+.cal .dc.has{background:var(--pri-l);color:var(--pri-d)}
+.cal .dc.today{outline:3px solid var(--pri);outline-offset:-3px}
+.cal .dc.fut{opacity:.35}
+.cal .dc.blank{background:transparent}
+.navrow{display:flex;gap:10px;margin-top:6px}
+.link{background:none;border:0;color:var(--pri-d);font-weight:800;text-decoration:underline;padding:8px 0;font-size:.9rem}
+
+/* water */
+.counter{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 10px}
+.counter .num{font-size:2.1rem;font-weight:800;min-width:4.2rem;text-align:center;line-height:1}
+.counter .num small{display:block;font-size:.75rem;color:var(--soft);font-weight:700;margin-top:4px}
+.round{width:3.2rem;height:3.2rem;border-radius:50%;border:0;background:var(--pri-l);color:var(--pri-d);font-size:1.6rem;font-weight:800}
+.glassrow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.glass{height:2.6rem;border-radius:12px;border:2px solid var(--gb);background:var(--card);font-size:1.25rem;opacity:.4;padding:0}
+.glass.on{background:var(--gl);border-color:var(--gon);opacity:1}
+
+/* pain level */
+.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.level{border:3px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:8px 2px;font-size:.68rem;font-weight:800;text-align:center;line-height:1.1}
+.level b{display:block;font-size:1.2rem}
+.level.on{color:#fff}
+.note{background:var(--warn-l);color:var(--warn);border-radius:14px;padding:10px 12px;font-weight:700;font-size:.85rem;margin-top:10px}
+
+/* photo */
+.photo-box{border:3px dashed var(--mem-b);border-radius:20px;min-height:13rem;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--card);margin-bottom:14px}
+.photo-box img{width:100%;display:block}
+.photo-box .ph{color:var(--soft);text-align:center;padding:20px}
+.photo-box .ph .em{font-size:3rem;display:block}
+
+/* feelings */
+.feel{border-left:6px solid var(--line);padding-left:12px;margin:16px 0}
+.feel label{display:block;font-weight:800;font-size:1rem;margin-bottom:6px}
+.feel.guilt{border-color:#9C7BC4}.feel.dis{border-color:#7FA35A}.feel.sor{border-color:#5B8FC4}.feel.good{border-color:#E7A93C}
+
+/* writing + voice */
+.tabs{display:flex;background:var(--muted2);border-radius:14px;padding:4px;margin-bottom:12px}
+.tabs button{flex:1;border:0;background:transparent;border-radius:11px;min-height:2.6rem;font-weight:800;font-size:.9rem;color:var(--soft)}
+.tabs button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.canvas-wrap{border-radius:16px;overflow:hidden;border:2px solid var(--line);background:#fff}
+canvas{display:block;touch-action:none}
+.pens{display:flex;align-items:center;gap:8px;margin:10px 0}
+.pen{width:2.1rem;height:2.1rem;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line);flex:none}
+.pen.on{box-shadow:0 0 0 3px var(--ink)}
+.pens .sp{flex:1}
+.voice{border:2px solid var(--mem-b);background:var(--mem)}
+.rectime{font-size:1.6rem;font-weight:800;color:var(--rec);text-align:center;margin:6px 0 10px}
+audio{width:100%;margin:6px 0}
+
+/* review & view */
+.rv{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.rv:last-child{border-bottom:0}
+.rv .k{font-weight:800;min-width:5.2rem;font-size:.85rem}
+.rv .v{flex:1;white-space:pre-wrap;word-break:break-word;font-size:.95rem}
+.rv .v.empty{color:var(--empty)}
+.rv .ch{border:0;background:none;color:var(--pri-d);font-weight:800;font-size:.8rem;text-decoration:underline}
+.vsec{margin-bottom:12px}
+.vsec .lab{font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin-bottom:3px}
+.vsec .txt{white-space:pre-wrap;word-break:break-word}
+.vimg{width:100%;border-radius:14px;display:block;background:var(--muted);min-height:6rem}
+.summary p{margin:0 0 8px}
+
+/* photos grid */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pcell{border:0;padding:0;background:var(--mem-b);border-radius:12px;aspect-ratio:3/4;overflow:hidden;position:relative}
+.pcell img{width:100%;height:100%;object-fit:cover;display:block}
+.pcell span{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.55));color:#fff;font-size:.68rem;font-weight:800;padding:12px 6px 5px;text-align:left}
+
+/* settings */
+.opt{display:flex;gap:8px;margin:6px 0 16px}
+.opt button{flex:1;min-height:3rem;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;font-size:.9rem}
+.opt button.on{border-color:var(--pri);background:var(--pri-l)}
+
+/* pin */
+.pin-wrap{text-align:center;padding-top:24px}
+.dots{display:flex;justify-content:center;gap:16px;margin:20px 0}
+.dots i{width:20px;height:20px;border-radius:50%;border:3px solid var(--pri);display:block}
+.dots i.on{background:var(--pri)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:320px;margin:0 auto}
+.key{height:4rem;border-radius:20px;border:0;background:var(--card);color:var(--ink);font-size:1.6rem;font-weight:800;box-shadow:0 1px 0 var(--line),0 4px 10px var(--shadow)}
+.key.plain{background:transparent;box-shadow:none;font-size:1.3rem}
+.err{color:var(--warn);font-weight:800;min-height:1.5rem}
+.shake{animation:sh .35s}
+@keyframes sh{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+
+/* overlay, toast, modal */
+.overlay{position:fixed;inset:0;background:var(--overlay);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;font-weight:800;font-size:1.1rem;gap:18px;text-align:center;padding:20px}
+.spin{width:54px;height:54px;border-radius:50%;border:6px solid var(--pri-l);border-top-color:var(--pri);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:16px;right:16px;bottom:120px;max-width:528px;margin:0 auto;background:#2A2622;color:#fff;border-radius:14px;padding:12px 16px;font-weight:700;font-size:.9rem;z-index:80;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(42,38,34,.45);z-index:90;display:flex;align-items:flex-end;justify-content:center}
+.modal .sheet{background:var(--card);border-radius:22px 22px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-width:560px;width:100%}
+.banner{background:var(--ok-l);color:var(--ok);border-radius:14px;padding:10px 14px;font-weight:700;font-size:.85rem;margin-bottom:12px}
+.done{text-align:center;padding-top:24px}
+.done .em{font-size:4.2rem}
+.loading{color:var(--soft);text-align:center;padding:26px 0;font-weight:700}
+
+/* festivals + special event */
+.cal .dc.fut.fest{opacity:.9}
+.cal .dc.fest{background:var(--fest-l);box-shadow:inset 0 0 0 2px var(--fest)}
+.cal .dc .st{position:absolute;top:1px;right:3px;font-size:.55rem}
+.cal .dc{position:relative}
+.festlist{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.festlist div{display:flex;gap:10px;align-items:center;font-size:.85rem;padding:3px 0}
+.festlist b{min-width:3.6rem;color:var(--pri-d)}
+.festtoday{display:block;background:rgba(255,255,255,.22);border-radius:12px;padding:6px 10px;font-weight:800;font-size:.85rem;margin-bottom:10px}
+.chip.on{border-color:var(--pri);background:var(--pri-l);color:var(--pri-d)}
+.chip.festchip{border-color:var(--fest);background:var(--fest-l)}
+.chip.festchip.on{border-color:var(--pri);background:var(--pri-l)}
+.mood8 .tile{min-height:4.4rem;font-size:.7rem;padding:8px 2px}
+.mood8 .tile .em{font-size:1.6rem}
+.pick2{display:grid;grid-template-columns:1fr;gap:12px}
+.pick2 .card{margin:0}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- PIN -->
+  <section id="scrPin" class="hidden">
+    <div class="pin-wrap">
+      <div style="font-size:3.2rem">🌼</div>
+      <h1>Meri Diary</h1>
+      <p class="sub" style="margin:0">Apna 4 number ka PIN daaliye</p>
+      <div class="dots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+      <div class="err" id="pinErr"></div>
+      <div class="keys" id="pinKeys"></div>
+      <p class="sub hidden" id="demoNote" style="margin-top:20px">Preview: PIN hai 1234</p>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="scrHome" class="hidden">
+    <div class="homehead">
+      <div><p class="hello" id="hello"></p><h1 id="todayLabel"></h1></div>
+      <button class="iconbtn" id="setBtn" aria-label="Settings">⚙️</button>
+    </div>
+    <div class="today-card" id="todayCard"></div>
+    <div id="memoryBox"></div>
+    <div class="card">
+      <h3>📊 Pichhle 7 din</h3>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="card">
+      <div class="cal-head">
+        <button class="iconbtn" id="calPrev" aria-label="Pichhla mahina">‹</button>
+        <h3 id="calTitle" style="margin:0"></h3>
+        <button class="iconbtn" id="calNext" aria-label="Agla mahina">›</button>
+      </div>
+      <div class="cal" id="cal"></div>
+      <p class="hint" style="margin:10px 0 0">Kisi bhi din ko dabaiye — us din ki yaad khulegi. 🟡 = tyohaar, ⭐ = khaas din</p>
+      <div class="festlist" id="festList"></div>
+    </div>
+    <div class="navrow">
+      <button class="btn light" id="photosBtn">📷 Meri tasveerein</button>
+    </div>
+    <button class="link hidden" id="yestBtn">Kal likhna bhool gaye? Kal ke liye likhiye</button>
+  </section>
+
+  <!-- ENTRY -->
+  <section id="scrEntry" class="hidden">
+    <div class="topbar">
+      <button class="iconbtn" id="closeEntry" aria-label="Band karein">✕</button>
+      <div class="progress">
+        <div class="lbl" id="stepLbl"></div>
+        <div class="bar"><i id="stepBar"></i></div>
+      </div>
+      <button class="savetop hidden" id="saveTop">✓ Save</button>
+    </div>
+    <div class="banner hidden" id="draftBanner">Aapka adhoora likha hua yahin hai. 💚</div>
+
+    <!-- 0 quick taps -->
+    <div class="step" data-title="Jaldi se">
+      <p class="sub" id="entryDateLbl" style="margin-bottom:10px;font-weight:800"></p>
+
+      <div class="q"><h3>😊 Aaj mann kaisa hai?</h3><div class="grid g4 mood8" id="moodGrid"></div></div>
+
+      <div class="q">
+        <h3>⭐ Aaj kuch khaas hua?</h3>
+        <p class="hint">Jo bhi hua, sab dabaiye.</p>
+        <div class="chips" id="evChips"></div>
+        <div id="evMore" class="hidden"><div class="fld"><input type="text" data-k="eventNote" placeholder="Thoda bataiye — kahan, kiske saath…"></div></div>
+      </div>
+
+      <div class="q">
+        <h3>💧 Kitna paani piya?</h3>
+        <p class="hint">1 glass = lagbhag 250 ml</p>
+        <div class="counter">
+          <button class="round" id="wMinus" aria-label="Kam">−</button>
+          <div class="num"><span id="wNum">0</span><small>glass</small></div>
+          <button class="round" id="wPlus" aria-label="Zyada">+</button>
+        </div>
+        <div class="glassrow" id="glasses"></div>
+      </div>
+
+      <div class="q">
+        <h3>🚶‍♀️ Aaj walk ya exercise ki?</h3>
+        <div class="pills" id="exGrid"></div>
+        <div id="exMore" class="hidden" style="margin-top:12px">
+          <div class="chips" data-for="exerciseNote" data-list="ex"></div>
+          <div class="fld"><input type="text" data-k="exerciseNote" placeholder="Jaise: Walk, 30 min"></div>
+        </div>
+      </div>
+
+      <div class="q">
+        <h3>🩹 Sabse zyada dard kahan hai?</h3>
+        <div class="grid g4" id="painGrid"></div>
+        <div id="painMore" class="hidden">
+          <label class="f">Kitna dard hai?</label>
+          <div class="levels" id="levels"></div>
+          <div class="note hidden" id="chestNote">Agar seene mein tez ya naya dard hai, turant doctor ko ya 108 pe call karein.</div>
+          <label class="f">Dard ke baare mein kuch aur?</label>
+          <div class="fld"><input type="text" data-k="painNote" placeholder="Jaise: subah se, chalne ke baad"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1 mood question -->
+    <div class="step" data-title="Ek chhota sawaal">
+      <div style="font-size:2.8rem" id="mqEmoji">📝</div>
+      <h2 id="mqTitle"></h2>
+      <p class="sub">🎤 dabaiye aur bol dijiye. Ya likh dijiye. Sirf aap dekhengi.</p>
+      <div class="fld" data-nomic><textarea data-k="moodAnswer" placeholder="Yahan likhiye…" style="padding-right:14px"></textarea></div>
+      <button class="btn micbig" data-mic-for="moodAnswer">🎤 Bolkar batayein</button>
+    </div>
+
+    <!-- 2 food -->
+    <div class="step" data-title="Khana">
+      <h2>Aaj kya khaya? 🍽️</h2>
+      <p class="sub">Shabd dabaiye, 🎤 se boliye, ya likhiye.</p>
+      <label class="f">☀️ Nashta</label>
+      <div class="chips" data-for="breakfast" data-list="breakfast"></div>
+      <div class="fld"><input type="text" data-k="breakfast" placeholder="Nashta"></div>
+      <label class="f">🍛 Dopahar ka khana</label>
+      <div class="chips" data-for="lunch" data-list="lunch"></div>
+      <div class="fld"><input type="text" data-k="lunch" placeholder="Dopahar ka khana"></div>
+      <label class="f">🌙 Raat ka khana</label>
+      <div class="chips" data-for="dinner" data-list="dinner"></div>
+      <div class="fld"><input type="text" data-k="dinner" placeholder="Raat ka khana"></div>
+    </div>
+
+    <!-- 3 feelings -->
+    <div class="step" data-title="Mann ki baat">
+      <h2>Mann ki baat 💭</h2>
+      <p class="sub">Jo mann ho wahi likhiye ya boliye. Koi bhi chhod sakti hain.</p>
+      <div class="feel good"><label>🌸 Aaj kuch achha jo hua</label><div class="fld"><textarea data-k="good" placeholder="Ek chhoti si khushi…"></textarea></div></div>
+      <div class="feel sor"><label>💧 Kis baat ka dukh hua</label><div class="fld"><textarea data-k="sorrow"></textarea></div></div>
+      <div class="feel guilt"><label>😔 Kis baat ka pachhtava hai</label><div class="fld"><textarea data-k="guilt"></textarea></div></div>
+      <div class="feel dis"><label>😖 Kya bilkul achha nahi laga</label><div class="fld"><textarea data-k="disgust"></textarea></div></div>
+    </div>
+
+    <!-- 4 story -->
+    <div class="step" data-title="Aaj ki kahani">
+      <h2>Aaj ki kahani 📖</h2>
+      <p class="sub">Din ki baat — jaise mann ho waise bataiye.</p>
+      <div class="pick2">
+        <div class="card">
+          <h3>🎤 Bolkar likhwayein</h3>
+          <p class="hint">Aap bolengi, wo yahan likh jayega. Ya haath se likhiye.</p>
+          <div class="tabs"><button id="tabType" class="on">⌨️ Likha hua</button><button id="tabDraw">✍️ Haath se</button></div>
+          <div id="typePane">
+            <div class="fld" data-nomic><textarea data-k="writing" style="min-height:10rem;padding-right:14px" placeholder="Aaj…"></textarea></div>
+            <button class="btn micbig" data-mic-for="writing">🎤 Bolkar likhwayein</button>
+          </div>
+          <div id="drawPane" class="hidden">
+            <div class="pens" id="pens">
+              <span class="sp"></span>
+              <button class="btn ghost small" id="undoBtn">↶ Wapas</button>
+              <button class="btn ghost small" id="clearBtn">Saaf karein</button>
+            </div>
+            <div class="canvas-wrap"><canvas id="cv"></canvas></div>
+          </div>
+        </div>
+        <div class="card voice">
+          <h3>🎙️ Apni awaaz save karein</h3>
+          <p class="hint">Awaaz record hogi — likhi nahi jayegi. Baad mein is din ki yaad mein sun sakengi. (3 minute tak)</p>
+          <div id="vmBox"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 photo -->
+    <div class="step" data-title="Photo">
+      <h2>Aaj ki ek photo 📸</h2>
+      <p class="sub">Apni ek simple photo — is din ki yaad ke liye.</p>
+      <div class="photo-box" id="photoBox"></div>
+      <div class="row">
+        <button class="btn" id="camBtn">📷 Photo khinchein</button>
+        <button class="btn light" id="galBtn">🖼️ Gallery</button>
+      </div>
+      <button class="link hidden" id="rmPhoto" style="display:block;margin:10px auto 0">Photo hatayein</button>
+      <input type="file" id="camInput" accept="image/*" capture="user" class="hidden">
+      <input type="file" id="galInput" accept="image/*" class="hidden">
+    </div>
+
+    <!-- 6 review -->
+    <div class="step" data-title="Dekh ke save karein">
+      <h2>Aapka aaj ka din</h2>
+      <p class="sub">Ek baar dekh lijiye, phir Save dabaiye.</p>
+      <div class="card" id="review"></div>
+    </div>
+  </section>
+
+  <!-- VIEW -->
+  <section id="scrView" class="hidden">
+    <div class="topbar">
+      <button class="iconbtn" id="viewBack" aria-label="Wapas">‹</button>
+      <div style="font-weight:800;font-size:1.05rem" id="viewTitle"></div>
+    </div>
+    <div id="viewBody"><div class="loading">Khul raha hai…</div></div>
+  </section>
+
+  <!-- PHOTOS -->
+  <section id="scrPhotos" class="hidden">
+    <div class="topbar">
+      <button class="iconbtn" id="photosBack" aria-label="Wapas">‹</button>
+      <div style="font-weight:800;font-size:1.05rem">📷 Meri tasveerein</div>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="scrSet" class="hidden">
+    <div class="topbar">
+      <button class="iconbtn" id="setBack" aria-label="Wapas">‹</button>
+      <div style="font-weight:800;font-size:1.05rem">⚙️ Settings</div>
+    </div>
+    <div class="card">
+      <h3>🎤 Bolne pe likhawat kaisi ho?</h3>
+      <div class="opt" id="optScript">
+        <button data-v="roman">Hinglish<br><small>aaj din achha tha</small></button>
+        <button data-v="hindi">हिंदी<br><small>आज दिन अच्छा था</small></button>
+      </div>
+      <h3>🔠 Akshar ka size</h3>
+      <div class="opt" id="optSize">
+        <button data-v="n">Normal</button>
+        <button data-v="b" style="font-size:1.1rem">Bada</button>
+      </div>
+      <h3>🌗 Rang</h3>
+      <div class="opt" id="optTheme">
+        <button data-v="light">☀️ Din</button>
+        <button data-v="dark">🌙 Raat</button>
+        <button data-v="auto">📱 Phone jaisa</button>
+      </div>
+      <h3>🔒 Phone se PIN hatayein</h3>
+      <p class="hint" style="margin:0 0 8px">Agli baar khulne pe PIN dobara poocha jayega.</p>
+      <button class="btn ghost" id="lockBtn">PIN dobara poochein</button>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section id="scrDone" class="hidden">
+    <div class="done">
+      <div class="em">🌼</div>
+      <h1>Aaj ka din save ho gaya!</h1>
+      <p class="sub" id="doneMsg"></p>
+    </div>
+    <div class="card summary" id="doneSummary"></div>
+    <div id="doneMemory"></div>
+    <button class="btn" id="doneHome">🏠 Home pe chalein</button>
+  </section>
+</div>
+
+<div class="bottombar hidden" id="navBar">
+  <div class="inner">
+    <button class="btn ghost" id="backBtn">‹ Peeche</button>
+    <button class="btn" id="nextBtn">Aage ›</button>
+  </div>
+</div>
+<div class="bottombar hidden" id="viewBar">
+  <div class="inner"><button class="btn" id="editBtn">✏️ Is din ko badlein</button></div>
+</div>
+
+<div class="listening hidden" id="listening">🔴 Sun rahe hain… boliye</div>
+<div class="overlay hidden" id="overlay"><div class="spin"></div><div id="overlayMsg">Save ho raha hai…</div></div>
+<div class="toast hidden" id="toast"></div>
+<div class="modal hidden" id="micHelp">
+  <div class="sheet">
+    <h2>🎤 Mic nahi chal raha</h2>
+    <p>Koi baat nahi! Do tareeke hain:</p>
+    <p><b>1.</b> Jab poochhe "Mic allow karein?" to <b>Allow</b> dabaiye.</p>
+    <p><b>2.</b> Likhne ke dabbe ko dabaiye, phir <b>keyboard pe 🎤</b> dabakar boliye. (Keyboard mein Hindi bhasha chalu rakhein.)</p>
+    <button class="btn" id="micHelpOk">Theek hai</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIG — when hosting this file on GitHub Pages, paste your
+   Apps Script web app URL (ends with /exec) between the quotes.
+   Leave empty when the page is served by Apps Script itself.
+   ===================================================================== */
+const API_URL = '';
+
+/* ================= data layer ================= */
+const HAS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+const MODE = HAS_GAS ? 'gas' : (API_URL ? 'http' : 'mock');
+
+function api(fn, ...args) {
+  if (MODE === 'gas') {
+    return new Promise((res, rej) => { google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args); });
+  }
+  if (MODE === 'http') {
+    return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) })
+      .then(r => { if (!r.ok) throw new Error('Network'); return r.json(); })
+      .then(j => { if (!j.ok) throw new Error(j.error); return j.data; });
+  }
+  return Promise.resolve().then(() => MOCK[fn](...args));
+}
+
+// Preview-only backend (no Google): data stays in this browser
+const MOCK = {
+  db() { try { return JSON.parse(localStorage.getItem('diary-mock-db') || '{}'); } catch (e) { return {}; } },
+  put(db) { try { localStorage.setItem('diary-mock-db', JSON.stringify(db)); } catch (e) { throw new Error('Phone storage full'); } },
+  login(pin) { if (pin !== '1234') throw new Error('Wrong PIN'); return true; },
+  saveEntry(pin, e) { this.login(pin); const db = this.db(); db[e.date] = e; this.put(db); return true; },
+  getEntry(pin, d) { this.login(pin); return this.db()[d] || null; },
+  listEntries(pin) {
+    this.login(pin);
+    return Object.values(this.db()).map(e => ({
+      date: e.date, mood: e.mood, exercise: e.exercise, water: e.water, painArea: e.painArea, painLevel: e.painLevel,
+      photo: e.photo || '', voice: !!e.voice, event: e.event || '', snippet: String(e.moodAnswer || e.good || e.writing || '').slice(0, 140)
+    })).sort((a, b) => b.date.localeCompare(a.date));
+  },
+  getMedia(pin, id) { return id; },
+  getThumb(pin, id) { return id; }
+};
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+/* ================= words ================= */
+const MOODS = [
+  { k: 'Happy',   e: '😊', l: 'Khush',     adj: 'khush',      q: 'Aaj kis baat se khushi mili?' },
+  { k: 'Calm',    e: '😌', l: 'Shaant',    adj: 'shaant',     q: 'Aaj kis baat se mann ko shaanti mili?' },
+  { k: 'Tired',   e: '😴', l: 'Thakaan',   adj: 'thaki hui',  q: 'Aaj kis cheez ne thakaya? Aaram ke liye kya karengi?' },
+  { k: 'Sad',     e: '😢', l: 'Udaas',     adj: 'udaas',      q: 'Aaj kis baat se mann udaas hua? Kisse baat karke halka lagega?' },
+  { k: 'Worried', e: '😟', l: 'Pareshaan', adj: 'pareshaan',  q: 'Kis baat ki chinta hai? Uske liye ek chhota kadam kya ho sakta hai?' },
+  { k: 'Angry',   e: '😠', l: 'Gussa',     adj: 'gusse mein', q: 'Aaj kis baat pe gussa aaya? Ab kaisa lag raha hai?' },
+  { k: 'Restless', e: '😣', l: 'Bechaini',  adj: 'bechain',    q: 'Mann kis baat se bechain hai? Kya karke thoda sukoon milega?' },
+  { k: 'Irritated', e: '😤', l: 'Chirchirapan', adj: 'chirchiri', q: 'Aaj kis baat pe chirchirapan hua? Kya cheez mann halka kar sakti hai?' }
+];
+const PAINS = [
+  { k: 'None', l: 'Koi dard nahi', e: '🙂', old: 'No pain' }, { k: 'Head', l: 'Sar', e: '🤕' }, { k: 'Neck', l: 'Gardan', e: '🧣' },
+  { k: 'Shoulders', l: 'Kandhe', e: '🤷‍♀️' }, { k: 'Back', l: 'Kamar', e: '🧍‍♀️' }, { k: 'Stomach', l: 'Pet', e: '🤢' },
+  { k: 'Knees', l: 'Ghutne', e: '🦵' }, { k: 'Legs', l: 'Pair', e: '🦶', old: 'Legs & feet' }, { k: 'Arms', l: 'Haath', e: '💪', old: 'Arms & hands' },
+  { k: 'Chest', l: 'Seena', e: '🫁' }, { k: 'Teeth', l: 'Daant', e: '🦷' }, { k: 'Other', l: 'Kuch aur', e: '✏️' }
+];
+const LEVELS = [['Thoda', '#8BC48A'], ['Kuch', '#C7C25A'], ['Beech ka', '#E7A93C'], ['Zyada', '#E07A3C'], ['Bahut zyada', '#C9443A']];
+const LISTS = {
+  ex: ['Walk', 'Yoga', 'Pranayam', 'Stretching', 'Ghar ka kaam', 'Mandir tak paidal', '15 min', '30 min', '1 ghanta'],
+  breakfast: ['Chai', 'Poha', 'Paratha', 'Daliya', 'Phal', 'Dry fruits', 'Baasi', 'Nahi khaya'],
+  lunch: ['Roti', 'Chawal', 'Dal', 'Sabzi', 'Dahi', 'Salad', 'Raita', 'Nahi khaya'],
+  dinner: ['Roti', 'Chawal', 'Dal', 'Sabzi', 'Khichdi', 'Chila', 'Bahar khaya', 'Nahi khaya']
+};
+const EVENTS = [
+  ['Kuch khaas nahi', '🙂'], ['Tyohaar', '🪔'], ['Shaadi / Function', '💒'], ['Bahar ghoomne gaye', '🚗'],
+  ['Mandir / Satsang', '🛕'], ['Mehmaan aaye', '🏠'], ['Family se mile', '👨‍👩‍👧'], ['Kharidari', '🛍️'],
+  ['Janamdin / Saalgirah', '🎂'], ['Doctor / Hospital', '🏥'], ['Yatra / Safar', '🚆'], ['Kuch aur', '✏️']
+];
+const evEmoji = l => { const f = EVENTS.find(x => x[0] === l); return f ? f[1] : (FEST_BY_NAME[l] || '⭐'); };
+
+/* Indian festivals (Drik Panchang, North India). Add next years here when needed. */
+const FESTIVALS = {
+  '2026-01-13': [['Lohri', '🔥']], '2026-01-14': [['Makar Sankranti', '🪁']], '2026-01-23': [['Vasant Panchami', '🌼']],
+  '2026-01-26': [['Gantantra Diwas', '🇮🇳']], '2026-02-15': [['Mahashivratri', '🔱']], '2026-03-03': [['Holika Dahan', '🔥']],
+  '2026-03-04': [['Holi', '🎨']], '2026-03-19': [['Chaitra Navratri shuru', '🪔']], '2026-03-26': [['Ram Navami', '🏹']],
+  '2026-04-02': [['Hanuman Jayanti', '🚩']], '2026-04-19': [['Akshaya Tritiya', '🪙']], '2026-07-29': [['Guru Purnima', '🙏']],
+  '2026-08-15': [['Swatantrata Diwas', '🇮🇳'], ['Hariyali Teej', '🌿']], '2026-08-17': [['Nag Panchami', '🐍']],
+  '2026-08-28': [['Raksha Bandhan', '🧵']], '2026-09-04': [['Janmashtami', '🦚']], '2026-09-14': [['Ganesh Chaturthi', '🐘']],
+  '2026-09-19': [['Radha Ashtami', '🌸']], '2026-10-02': [['Gandhi Jayanti', '🇮🇳']], '2026-10-11': [['Navratri shuru', '🪔']],
+  '2026-10-20': [['Dussehra', '🏹']], '2026-10-25': [['Sharad Purnima', '🌕']], '2026-10-29': [['Karwa Chauth', '🌙']],
+  '2026-11-01': [['Ahoi Ashtami', '⭐']], '2026-11-06': [['Dhanteras', '🪙']], '2026-11-08': [['Diwali', '🪔']],
+  '2026-11-10': [['Govardhan Puja', '⛰️']], '2026-11-11': [['Bhai Dooj', '👫']], '2026-11-15': [['Chhath Puja', '☀️']],
+  '2026-11-20': [['Dev Uthani Ekadashi', '🙏']], '2026-11-24': [['Kartik Purnima', '🌕']],
+  '2027-01-13': [['Lohri', '🔥']], '2027-01-14': [['Makar Sankranti', '🪁']], '2027-01-26': [['Gantantra Diwas', '🇮🇳']],
+  '2027-02-11': [['Vasant Panchami', '🌼']], '2027-03-06': [['Mahashivratri', '🔱']], '2027-03-21': [['Holika Dahan', '🔥']],
+  '2027-03-22': [['Holi', '🎨']], '2027-04-07': [['Chaitra Navratri shuru', '🪔']], '2027-04-15': [['Ram Navami', '🏹']],
+  '2027-04-20': [['Hanuman Jayanti', '🚩']], '2027-05-09': [['Akshaya Tritiya', '🪙']], '2027-07-18': [['Guru Purnima', '🙏']],
+  '2027-08-04': [['Hariyali Teej', '🌿']], '2027-08-06': [['Nag Panchami', '🐍']], '2027-08-15': [['Swatantrata Diwas', '🇮🇳']],
+  '2027-08-17': [['Raksha Bandhan', '🧵']], '2027-08-25': [['Janmashtami', '🦚']], '2027-09-04': [['Ganesh Chaturthi', '🐘']],
+  '2027-09-08': [['Radha Ashtami', '🌸']], '2027-09-30': [['Navratri shuru', '🪔']], '2027-10-02': [['Gandhi Jayanti', '🇮🇳']],
+  '2027-10-09': [['Dussehra', '🏹']], '2027-10-14': [['Sharad Purnima', '🌕']], '2027-10-18': [['Karwa Chauth', '🌙']],
+  '2027-10-22': [['Ahoi Ashtami', '⭐']], '2027-10-27': [['Dhanteras', '🪙']], '2027-10-29': [['Diwali', '🪔']],
+  '2027-10-30': [['Govardhan Puja', '⛰️']], '2027-10-31': [['Bhai Dooj', '👫']], '2027-11-04': [['Chhath Puja', '☀️']],
+  '2027-11-10': [['Dev Uthani Ekadashi', '🙏']], '2027-11-14': [['Kartik Purnima', '🌕']]
+};
+const FEST_BY_NAME = {}; Object.values(FESTIVALS).forEach(a => a.forEach(([n, e]) => { FEST_BY_NAME[n] = e; }));
+const DAYS = ['Ravivaar', 'Somvaar', 'Mangalvaar', 'Budhvaar', 'Guruvaar', 'Shukravaar', 'Shanivaar'];
+const DAYS_SHORT = ['Ravi', 'Som', 'Mangal', 'Budh', 'Guru', 'Shukr', 'Shani'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DONE_MSGS = [
+  'Shabaash! Aaj aapne apne liye samay nikaala. 🙏',
+  'Dhanyavaad likhne ke liye. Aaram se soiye. 🌙',
+  'Har panna aapke liye ek chhota sa tohfa hai. 🎁',
+  'Bahut badhiya! Kal phir milte hain. 🌼'
+];
+const EMPTY = {
+  date: '', mood: '', moodAnswer: '', exercise: '', exerciseNote: '', water: 0,
+  breakfast: '', lunch: '', dinner: '', painArea: '', painLevel: 0, painNote: '',
+  photo: '', guilt: '', disgust: '', sorrow: '', good: '', writing: '', drawing: '', voice: '',
+  event: '', eventNote: ''
+};
+
+/* ================= Devanagari -> Hinglish (Roman) ================= */
+const toRoman = (() => {
+  const C = { 'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'n','च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'n','ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
+    'त':'t','थ':'th','द':'d','ध':'dh','न':'n','प':'p','फ':'ph','ब':'b','भ':'bh','म':'m','य':'y','र':'r','ल':'l','व':'v','श':'sh','ष':'sh',
+    'स':'s','ह':'h','ळ':'l','क़':'q','ख़':'kh','ग़':'g','ज़':'z','ड़':'d','ढ़':'dh','फ़':'f','य़':'y' };
+  const NUK = { 'क':'q','ख':'kh','ग':'g','ज':'z','ड':'d','ढ':'dh','फ':'f' };
+  const M = { 'ा':'a','ि':'i','ी':'i','ु':'u','ू':'u','ृ':'ri','े':'e','ै':'ai','ो':'o','ौ':'au','ॅ':'e','ॉ':'o' };
+  const V = { 'अ':'a','आ':'aa','इ':'i','ई':'i','उ':'u','ऊ':'u','ऋ':'ri','ए':'e','ऐ':'ai','ओ':'o','औ':'au','ऑ':'o','ऍ':'e' };
+  const DIG = '०१२३४५६७८९';
+  function word(w) {
+    const s = [];
+    for (const x of w) {
+      const last = s[s.length - 1];
+      if (C[x] !== undefined) { s.push({ c: C[x], v: 'a', inh: true, base: x }); continue; }
+      if (x === '़' && last && last.c) { last.c = NUK[last.base] || last.c; continue; }
+      if (M[x] !== undefined && last && last.inh) { last.v = M[x]; last.inh = false; continue; }
+      if (x === '्' && last && last.inh) { last.v = ''; last.inh = false; continue; }
+      if (V[x] !== undefined) { s.push({ c: '', v: V[x], inh: false }); continue; }
+      if ((x === 'ं' || x === 'ँ') && last) { last.n = 'n'; continue; }
+      if (x === 'ः' && last) { last.n = 'h'; continue; }
+      const d = DIG.indexOf(x);
+      s.push({ raw: d >= 0 ? String(d) : x });
+    }
+    const isV = q => q && !q.raw && q.v !== '';
+    const n = s.length;
+    if (n > 1 && s[n - 1].inh && !s[n - 1].n) s[n - 1].v = '';           // final schwa
+    for (let i = n - 2; i >= 1; i--) {                                    // V C a C V -> V C C V
+      const q = s[i];
+      if (q.inh && !q.n && q.v === 'a' && isV(s[i - 1]) && s[i + 1] && s[i + 1].c && isV(s[i + 1])) { q.v = ''; i--; }
+    }
+    return s.map(q => q.raw !== undefined ? q.raw : q.c + q.v + (q.n || '')).join('');
+  }
+  // spellings people actually use in Hinglish
+  const FIX = { men: 'mein', nahin: 'nahi', achchha: 'accha', achchhi: 'acchi', achchhe: 'acche', chay: 'chai', minat: 'minute',
+    fon: 'phone', bat: 'baat', baten: 'baatein', sath: 'saath', hun: 'hoon', yah: 'yeh', vah: 'woh', vo: 'woh', kyon: 'kyun',
+    davai: 'dawai', davaai: 'dawai', doktar: 'doctor', haspatal: 'hospital', tivi: 'TV', mobail: 'mobile', bachchon: 'bacchon', bachche: 'bacche' };
+  return text => String(text).replace(/[ऀ-ॿ]+/g, w => { const r = word(w); return FIX[r] || r; }).replace(/[।॥]/g, '.');
+})();
+
+/* ================= helpers ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const fromYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const shift = (s, days) => { const d = fromYmd(s); d.setDate(d.getDate() + days); return ymd(d); };
+const todayStr = () => ymd(new Date());
+const nice = s => { const d = fromYmd(s); return `${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}`; };
+const niceY = s => nice(s) + ' ' + s.slice(0, 4);
+const moodOf = k => MOODS.find(m => m.k === k);
+const painOf = k => k ? PAINS.find(p => p.k === k || p.old === k || p.l === k) || { k, l: k, e: '🩹' } : null;
+const errTxt = e => String((e && e.message) || e);
+const isWrongPin = e => errTxt(e).indexOf('Wrong PIN') >= 0;
+const isLocked = e => errTxt(e).indexOf('Locked') >= 0;
+
+const SET = { script: store.get('diary-script') || 'roman', size: store.get('diary-size') || 'n', theme: store.get('diary-theme') || 'auto' };
+document.documentElement.classList.toggle('big', SET.size === 'b');
+const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+function applyTheme() {
+  const dark = SET.theme === 'dark' || (SET.theme === 'auto' && darkMQ && darkMQ.matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? '#191512' : '#C8642B';
+}
+applyTheme();
+if (darkMQ && darkMQ.addEventListener) darkMQ.addEventListener('change', applyTheme);
+
+let PIN = store.get('diary-pin') || '';
+let LIST = [];
+let S = Object.assign({}, EMPTY);
+let PREV = null;            // previous day's entry (for "Kal jaisa")
+let step = 0;
+let calMonth = new Date(); calMonth.setDate(1);
+const mediaCache = {};
+
+const SCREENS = ['scrPin', 'scrHome', 'scrEntry', 'scrView', 'scrDone', 'scrPhotos', 'scrSet'];
+function show(id) {
+  if (id !== 'scrEntry') { stopMic(); stopRec(); }
+  SCREENS.forEach(s => $(s).classList.toggle('hidden', s !== id));
+  $('navBar').classList.toggle('hidden', id !== 'scrEntry');
+  $('viewBar').classList.toggle('hidden', id !== 'scrView');
+  window.scrollTo(0, 0);
+}
+function overlay(msg) { $('overlayMsg').textContent = msg; $('overlay').classList.remove('hidden'); }
+function hideOverlay() { $('overlay').classList.add('hidden'); }
+let toastT;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('hidden'), 3800);
+}
+function handleErr(e, msg) {
+  hideOverlay();
+  if (isWrongPin(e)) { PIN = ''; store.del('diary-pin'); showPin(); return; }
+  if (isLocked(e)) { toast('Bahut baar galat PIN. 15 minute baad try karein.'); return; }
+  toast(msg || 'Kuch gadbad hui. Internet check karke dobara try karein.');
+}
+// Chrome-recorded audio has no length stored; this makes the player show the real length.
+function setAudio(el, src) {
+  if (!el) return;
+  el.onloadedmetadata = () => {
+    if (el.duration !== Infinity && !isNaN(el.duration)) return;
+    el.ontimeupdate = () => { el.ontimeupdate = null; el.currentTime = 0; };
+    el.currentTime = 1e101;
+  };
+  el.src = src;
+}
+function loadMedia(id, thumb) {
+  if (!id) return Promise.resolve('');
+  if (id.indexOf('data:') === 0) return Promise.resolve(id);
+  const key = (thumb ? 't:' : 'f:') + id;
+  if (mediaCache[key]) return Promise.resolve(mediaCache[key]);
+  return api(thumb ? 'getThumb' : 'getMedia', PIN, id).then(d => (mediaCache[key] = d));
+}
+
+/* ================= PIN ================= */
+let pinTyped = '';
+function showPin() {
+  pinTyped = ''; drawDots(); $('pinErr').textContent = '';
+  if (MODE === 'mock') $('demoNote').classList.remove('hidden');
+  show('scrPin');
+}
+function drawDots() { [...$('pinDots').children].forEach((d, i) => d.classList.toggle('on', i < pinTyped.length)); }
+(function buildKeys() {
+  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'];
+  $('pinKeys').innerHTML = keys.map(k => k ? `<button class="key${k === '⌫' ? ' plain' : ''}" data-key="${k}">${k}</button>` : '<span></span>').join('');
+  $('pinKeys').addEventListener('click', e => {
+    const k = e.target.closest('[data-key]'); if (!k) return;
+    const v = k.dataset.key;
+    if (v === '⌫') pinTyped = pinTyped.slice(0, -1);
+    else if (pinTyped.length < 4) pinTyped += v;
+    drawDots();
+    if (pinTyped.length === 4) tryPin(pinTyped);
+  });
+})();
+function tryPin(p) {
+  overlay('Khul raha hai…');
+  api('login', p).then(() => {
+    hideOverlay(); PIN = p; store.set('diary-pin', p); goHome();
+  }).catch(e => {
+    hideOverlay();
+    if (isWrongPin(e)) {
+      $('pinErr').textContent = 'PIN galat hai. Dobara daaliye.';
+      $('pinDots').classList.remove('shake'); void $('pinDots').offsetWidth; $('pinDots').classList.add('shake');
+    } else if (isLocked(e)) $('pinErr').textContent = 'Bahut baar galat. 15 minute baad try karein.';
+    else $('pinErr').textContent = 'Internet nahi hai? Dobara try karein.';
+    pinTyped = ''; drawDots();
+  });
+}
+
+/* ================= HOME ================= */
+function goHome() {
+  show('scrHome');
+  const h = new Date().getHours();
+  $('hello').textContent = h < 12 ? 'Suprabhat 🌅' : h < 17 ? 'Namaste ☀️' : 'Shubh sandhya 🌙';
+  $('todayLabel').textContent = nice(todayStr());
+  renderHome();
+  api('listEntries', PIN).then(list => { LIST = list || []; renderHome(); })
+    .catch(e => handleErr(e, 'Diary nahi khul paayi. Internet check karein.'));
+}
+const entryOn = d => LIST.find(x => x.date === d);
+function streak() {
+  let d = entryOn(todayStr()) ? todayStr() : shift(todayStr(), -1), n = 0;
+  while (entryOn(d)) { n++; d = shift(d, -1); }
+  return n;
+}
+function renderHome() {
+  const t = todayStr();
+  const tEntry = entryOn(t);
+  const draft = store.get('diary-draft-' + t);
+  const st = streak();
+  let stTxt = st >= 2 ? `<span class="streak">🔥 ${st} din lagataar</span>` : '';
+  const ft = FESTIVALS[t];
+  if (ft) stTxt += `<span class="festtoday">${ft.map(([n, x]) => x + ' Aaj ' + n + ' hai').join(' · ')} — shubhkaamnayein!</span>`;
+  else {
+    const nx = Object.keys(FESTIVALS).sort().find(k => k > t);
+    if (nx) { const dn = Math.round((fromYmd(nx) - fromYmd(t)) / 864e5); if (dn <= 7) stTxt += `<span class="festtoday">${FESTIVALS[nx][0][1]} ${FESTIVALS[nx][0][0]} — ${dn === 1 ? 'kal' : dn + ' din baad'}</span>`; }
+  }
+  if (tEntry) {
+    const m = moodOf(tEntry.mood);
+    $('todayCard').innerHTML = `${stTxt}<h2>${m ? m.e + ' ' : ''}Aaj ka panna likh liya ✓</h2><p>Kabhi bhi kholiye ya aur jodiye.</p>
+      <div class="row"><button class="btn" data-open="${t}">Kholiye</button><button class="btn ghost" data-edit="${t}">Aur jodiye</button></div>`;
+  } else {
+    $('todayCard').innerHTML = `${stTxt}<h2>📖 Aaj ka din kaisa raha?</h2><p>${draft ? 'Aapne likhna shuru kiya tha. Aage likhein?' : 'Bas 2 minute apne liye.'}</p>
+      <button class="btn" data-edit="${t}">${draft ? '✏️ Aage likhiye' : '🎤 Shuru karein'}</button>`;
+  }
+  renderMemory();
+  renderStats();
+  renderCal();
+  $('yestBtn').classList.toggle('hidden', !LIST.length || !!entryOn(shift(t, -1)));
+}
+
+/* memories: same date 1 year / 1 month / 1 week ago */
+function findMemory(base) {
+  const d = fromYmd(base);
+  const yr = new Date(d); yr.setFullYear(d.getFullYear() - 1);
+  const mo = new Date(d); mo.setMonth(d.getMonth() - 1);
+  const cands = [[ymd(yr), '1 saal pehle aaj ke din'], [ymd(mo), '1 mahina pehle aaj ke din'], [shift(base, -7), 'Pichhle hafte aaj ke din']];
+  for (const [ds, lab] of cands) { const e = entryOn(ds); if (e) return { e, lab }; }
+  return null;
+}
+function memoryCard(mem) {
+  const m = moodOf(mem.e.mood);
+  const id = 'mth' + mem.e.date.replace(/-/g, '');
+  const line = mem.e.snippet || (m ? `Aap ${m.adj} thin.` : 'Is din ka panna dekhiye.');
+  setTimeout(() => {
+    if (mem.e.photo) loadMedia(mem.e.photo, true).then(src => { const el = $(id); if (el) el.innerHTML = `<img src="${src}" alt="">`; }).catch(() => {});
+  });
+  return `<button class="memory" data-open="${mem.e.date}"><span class="th" id="${id}">${m ? m.e : '📄'}</span>
+    <span><div class="k">📅 ${mem.lab}</div><div class="s">${m ? m.e + ' ' + m.l + ' — ' : ''}${esc(line)}</div></span></button>`;
+}
+function renderMemory() {
+  const mem = findMemory(todayStr());
+  $('memoryBox').innerHTML = mem ? memoryCard(mem) : '';
+}
+
+function renderStats() {
+  const last = [];
+  for (let i = 0; i < 7; i++) { const e = entryOn(shift(todayStr(), -i)); if (e) last.push(e); }
+  if (!last.length) { $('stats').innerHTML = '<div class="hint" style="grid-column:1/-1;margin:0">Likhna shuru kijiye — yahan aapka hafte ka hisaab dikhega.</div>'; return; }
+  const moods = {}; const pains = {}; let walks = 0, water = 0, wn = 0;
+  last.forEach(e => {
+    if (e.mood) moods[e.mood] = (moods[e.mood] || 0) + 1;
+    if (e.exercise === 'Yes') walks++;
+    if (e.water) { water += e.water; wn++; }
+    const p = painOf(e.painArea); if (p && p.k !== 'None') pains[p.l] = (pains[p.l] || 0) + 1;
+  });
+  const top = o => Object.entries(o).sort((a, b) => b[1] - a[1])[0];
+  const tm = top(moods), tp = top(pains), mm = tm && moodOf(tm[0]);
+  $('stats').innerHTML = [
+    [`${last.length}/7`, 'din likha'],
+    [mm ? `${mm.e} ${tm[1]} din` : '—', mm ? mm.l + ' rahin' : 'mann'],
+    [`🚶‍♀️ ${walks} din`, 'walk / exercise'],
+    [wn ? `💧 ${Math.round(water / wn)}` : '—', 'glass paani roz'],
+  ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('')
+    + (tp ? `<div class="stat" style="grid-column:1/-1"><b>🩹 ${esc(tp[0])}</b><span>${tp[1]} din sabse zyada dard</span></div>` : '');
+}
+
+function renderCal() {
+  const y = calMonth.getFullYear(), mo = calMonth.getMonth(), t = todayStr();
+  $('calTitle').textContent = `${MONTHS[mo]} ${y}`;
+  const first = new Date(y, mo, 1).getDay(), days = new Date(y, mo + 1, 0).getDate();
+  let h = DAYS_SHORT.map(d => `<div class="wd">${d}</div>`).join('');
+  for (let i = 0; i < first; i++) h += '<div class="dc blank"></div>';
+  for (let d = 1; d <= days; d++) {
+    const ds = `${y}-${pad(mo + 1)}-${pad(d)}`, e = entryOn(ds), m = e && moodOf(e.mood), f = FESTIVALS[ds];
+    const cls = ['dc', e ? 'has' : '', f ? 'fest' : '', ds === t ? 'today' : '', ds > t ? 'fut' : ''].join(' ');
+    const icon = e ? (m ? m.e : '✓') : (f ? f[0][1] : '');
+    const star = e && isSpecial(e.event) ? '<span class="st">⭐</span>' : '';
+    h += `<button class="${cls}" data-day="${ds}" ${ds > t && !f ? 'disabled' : ''} title="${f ? esc(f.map(x => x[0]).join(', ')) : ''}">${star}<span class="e">${icon}</span>${d}</button>`;
+  }
+  $('cal').innerHTML = h;
+  const fl = Object.keys(FESTIVALS).filter(k => k.startsWith(`${y}-${pad(mo + 1)}-`)).sort();
+  $('festList').innerHTML = fl.length ? '<h3 style="font-size:.9rem;margin:0 0 4px">🪔 Is mahine ke tyohaar</h3>' + fl.map(k => {
+    const dd = fromYmd(k);
+    return FESTIVALS[k].map(([n, x]) => `<div><b>${dd.getDate()} ${MONTHS[dd.getMonth()].slice(0, 3)}</b><span>${x} ${n}</span></div>`).join('');
+  }).join('') : '';
+  const now = new Date();
+  const ahead = (y - now.getFullYear()) * 12 + (mo - now.getMonth());   // see festivals up to 12 months ahead
+  $('calNext').style.visibility = ahead >= 12 ? 'hidden' : 'visible';
+}
+$('calPrev').onclick = () => { calMonth.setMonth(calMonth.getMonth() - 1); renderCal(); };
+$('calNext').onclick = () => { calMonth.setMonth(calMonth.getMonth() + 1); renderCal(); };
+$('cal').addEventListener('click', e => {
+  const b = e.target.closest('[data-day]'); if (!b || b.disabled) return;
+  const d = b.dataset.day;
+  if (d > todayStr()) { toast(`${nice(d)}: ${FESTIVALS[d].map(([n, x]) => x + ' ' + n).join(', ')}`); return; }
+  if (entryOn(d)) openView(d);
+  else if (confirm(nice(d) + ' ke baare mein likhna hai?')) openEntry(d);
+});
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-open]'); if (o) { openView(o.dataset.open); return; }
+  const w = e.target.closest('[data-edit]'); if (w) openEntry(w.dataset.edit);
+});
+$('yestBtn').onclick = () => openEntry(shift(todayStr(), -1));
+$('photosBtn').onclick = openPhotos;
+$('setBtn').onclick = openSettings;
+
+/* ================= ENTRY ================= */
+const steps = [...document.querySelectorAll('#scrEntry .step')];
+
+function openEntry(date) {
+  overlay('Khul raha hai…');
+  const draftRaw = store.get('diary-draft-' + date);
+  let draft = null; try { draft = draftRaw ? JSON.parse(draftRaw) : null; } catch (e) {}
+  const prevDate = shift(date, -1);
+  Promise.all([
+    api('getEntry', PIN, date),
+    entryOn(prevDate) ? api('getEntry', PIN, prevDate).catch(() => null) : Promise.resolve(null)
+  ]).then(([server, prev]) => {
+    hideOverlay();
+    PREV = prev;
+    S = Object.assign({}, EMPTY, server || {}, draft || {}, { date });
+    $('draftBanner').classList.toggle('hidden', !draft);
+    resetCanvas();
+    fillForm();
+    step = 0; renderStep();
+    show('scrEntry');
+  }).catch(e => handleErr(e, 'Ye din nahi khul paaya. Internet check karein.'));
+}
+
+let draftT;
+function writeDraft() {
+  if (drawDirty) S.drawing = exportDrawing();
+  if (!store.set('diary-draft-' + S.date, JSON.stringify(S))) {
+    const lite = Object.assign({}, S);   // phone storage full: keep words, drop pictures/voice
+    ['photo', 'drawing', 'voice'].forEach(k => { if (String(lite[k]).indexOf('data:') === 0) lite[k] = ''; });
+    store.set('diary-draft-' + S.date, JSON.stringify(lite));
+  }
+}
+function saveDraft() { clearTimeout(draftT); draftT = setTimeout(writeDraft, 600); }
+
+function fillForm() {
+  document.querySelectorAll('#scrEntry [data-k]').forEach(el => { el.value = S[el.dataset.k] || ''; });
+  renderMood(); renderEvents(); renderEx(); renderWater(); renderPain(); renderPhoto(); renderVoice(); renderChips();
+  setTab('type');
+  $('entryDateLbl').textContent = S.date === todayStr() ? 'Aaj, ' + nice(S.date) : nice(S.date);
+}
+document.querySelectorAll('#scrEntry [data-k]').forEach(el => {
+  el.addEventListener('input', () => { S[el.dataset.k] = el.value; saveDraft(); });
+});
+// add a mic to every field
+document.querySelectorAll('.fld:not([data-nomic])').forEach(f => {
+  const el = f.querySelector('[data-k]');
+  f.insertAdjacentHTML('beforeend', `<button class="mic" data-mic-for="${el.dataset.k}" aria-label="Bolkar likhein">🎤</button>`);
+});
+
+/* quick-pick words: her most used words first, plus "same as yesterday" */
+function usage() { try { return JSON.parse(store.get('diary-usage') || '{}'); } catch (e) { return {}; } }
+function learnWords() {
+  const u = usage();
+  ['breakfast', 'lunch', 'dinner', 'exerciseNote'].forEach(k => {
+    const box = u[k] || (u[k] = {});
+    String(S[k] || '').split(',').map(w => w.trim()).filter(w => w && w.length <= 24).forEach(w => { box[w] = (box[w] || 0) + 1; });
+  });
+  store.set('diary-usage', JSON.stringify(u));
+}
+function renderChips() {
+  const u = usage();
+  document.querySelectorAll('.chips[data-for]').forEach(box => {
+    const k = box.dataset.for;
+    const mine = Object.entries(u[k] || {}).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([w]) => w).slice(0, 6);
+    const words = [...new Set([...mine, ...LISTS[box.dataset.list]])].slice(0, 10);
+    const same = PREV && PREV[k] ? `<button class="chip same" data-same="1">↺ Kal jaisa</button>` : '';
+    box.innerHTML = same + words.map(w => `<button class="chip">${esc(w)}</button>`).join('');
+  });
+}
+document.querySelectorAll('.chips[data-for]').forEach(box => {
+  box.addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    const k = box.dataset.for;
+    if (c.dataset.same) S[k] = PREV[k];
+    else { const cur = (S[k] || '').trim(), w = c.textContent; S[k] = cur ? cur.replace(/[,\s]+$/, '') + ', ' + w : w; }
+    document.querySelector(`#scrEntry [data-k="${k}"]`).value = S[k];
+    saveDraft();
+  });
+});
+
+function renderStep() {
+  stopMic();
+  steps.forEach((s, i) => s.classList.toggle('hidden', i !== step));
+  $('stepLbl').textContent = `${step + 1} / ${steps.length} · ${steps[step].dataset.title}`;
+  $('stepBar').style.width = ((step + 1) / steps.length * 100) + '%';
+  $('backBtn').textContent = step === 0 ? 'Band karein' : '‹ Peeche';
+  const last = step === steps.length - 1;
+  $('nextBtn').textContent = last ? '✓ Din save karein' : 'Aage ›';
+  $('nextBtn').classList.toggle('green', last);
+  $('saveTop').classList.toggle('hidden', step === 0 || last);
+  if (step === 1) renderMoodQ();
+  if (last) renderReview();
+  window.scrollTo(0, 0);
+}
+$('nextBtn').onclick = () => { if (step === steps.length - 1) saveDay(); else { step++; renderStep(); } };
+$('backBtn').onclick = () => { if (step === 0) closeEntry(); else { step--; renderStep(); } };
+$('saveTop').onclick = saveDay;
+$('closeEntry').onclick = closeEntry;
+function closeEntry() {
+  stopMic(); stopRec();
+  clearTimeout(draftT); writeDraft();
+  goHome();
+  toast('Aapka likha hua save hai. Kabhi bhi wapas aaiye.');
+}
+
+/* mood */
+function renderMood() {
+  $('moodGrid').innerHTML = MOODS.map(m => `<button class="tile${S.mood === m.k ? ' on' : ''}" data-mood="${m.k}"><span class="em">${m.e}</span>${m.l}</button>`).join('');
+}
+$('moodGrid').addEventListener('click', e => {
+  const t = e.target.closest('[data-mood]'); if (!t) return;
+  S.mood = t.dataset.mood; renderMood(); saveDraft();
+});
+/* special event of the day */
+const evList = () => String(S.event || '').split(',').map(x => x.trim()).filter(Boolean);
+function renderEvents() {
+  const on = evList();
+  const fest = (FESTIVALS[S.date] || []).map(([n, e]) => [n, e, true]);
+  const items = [...fest, ...EVENTS.map(([n, e]) => [n, e, false])];
+  $('evChips').innerHTML = items.map(([n, e, f]) =>
+    `<button class="chip${f ? ' festchip' : ''}${on.includes(n) ? ' on' : ''}" data-ev="${esc(n)}">${e} ${esc(n)}</button>`).join('');
+  $('evMore').classList.toggle('hidden', !on.length || (on.length === 1 && on[0] === 'Kuch khaas nahi'));
+}
+$('evChips').addEventListener('click', e => {
+  const c = e.target.closest('[data-ev]'); if (!c) return;
+  const n = c.dataset.ev; let on = evList();
+  if (on.includes(n)) on = on.filter(x => x !== n);
+  else if (n === 'Kuch khaas nahi') on = [n];
+  else on = on.filter(x => x !== 'Kuch khaas nahi').concat(n);
+  S.event = on.join(', '); renderEvents(); saveDraft();
+});
+function eventText(e) {
+  const on = String(e.event || '').split(',').map(x => x.trim()).filter(Boolean);
+  if (!on.length && !e.eventNote) return '';
+  return on.map(x => evEmoji(x) + ' ' + x).join(', ') + (e.eventNote ? (on.length ? '\n' : '') + e.eventNote : '');
+}
+const isSpecial = ev => { const on = String(ev || '').split(',').map(x => x.trim()).filter(Boolean); return on.some(x => x !== 'Kuch khaas nahi'); };
+
+function renderMoodQ() {
+  const m = moodOf(S.mood);
+  $('mqEmoji').textContent = m ? m.e : '📝';
+  $('mqTitle').textContent = m ? m.q : 'Aaj ke din ke baare mein thoda bataiye.';
+}
+
+/* exercise */
+function renderEx() {
+  $('exGrid').innerHTML = [['Yes', '👍 Haan'], ['No', '🙅‍♀️ Nahi']].map(([k, l]) =>
+    `<button class="pill${S.exercise === k ? ' on' : ''}" data-ex="${k}">${l}</button>`).join('');
+  $('exMore').classList.toggle('hidden', S.exercise !== 'Yes');
+}
+$('exGrid').addEventListener('click', e => {
+  const t = e.target.closest('[data-ex]'); if (!t) return;
+  S.exercise = S.exercise === t.dataset.ex ? '' : t.dataset.ex; renderEx(); saveDraft();
+});
+
+/* water */
+function renderWater() {
+  const n = S.water || 0;
+  $('wNum').textContent = n;
+  const total = Math.max(10, Math.ceil(n / 5) * 5);
+  $('glasses').innerHTML = Array.from({ length: total }, (_, i) => `<button class="glass${i < n ? ' on' : ''}" data-g="${i + 1}" aria-label="${i + 1} glass">🥛</button>`).join('');
+}
+$('glasses').addEventListener('click', e => {
+  const g = e.target.closest('[data-g]'); if (!g) return;
+  const v = Number(g.dataset.g);
+  S.water = S.water === v ? v - 1 : v; renderWater(); saveDraft();
+});
+$('wPlus').onclick = () => { S.water = Math.min(30, (S.water || 0) + 1); renderWater(); saveDraft(); };
+$('wMinus').onclick = () => { S.water = Math.max(0, (S.water || 0) - 1); renderWater(); saveDraft(); };
+
+/* pain */
+function renderPain() {
+  const cur = painOf(S.painArea);
+  $('painGrid').innerHTML = PAINS.map(p => `<button class="tile${cur && cur.k === p.k ? ' on' : ''}" data-pain="${p.k}"><span class="em">${p.e}</span>${p.l}</button>`).join('');
+  const has = cur && cur.k !== 'None';
+  $('painMore').classList.toggle('hidden', !has);
+  $('chestNote').classList.toggle('hidden', !(cur && cur.k === 'Chest'));
+  $('levels').innerHTML = LEVELS.map(([l, c], i) => {
+    const on = S.painLevel === i + 1;
+    return `<button class="level${on ? ' on' : ''}" data-lv="${i + 1}" style="${on ? `background:${c};border-color:${c}` : `border-color:${c}`}"><b>${i + 1}</b>${l}</button>`;
+  }).join('');
+}
+$('painGrid').addEventListener('click', e => {
+  const t = e.target.closest('[data-pain]'); if (!t) return;
+  S.painArea = t.dataset.pain;
+  if (S.painArea === 'None') { S.painLevel = 0; S.painNote = ''; document.querySelector('[data-k="painNote"]').value = ''; }
+  renderPain(); saveDraft();
+});
+$('levels').addEventListener('click', e => {
+  const t = e.target.closest('[data-lv]'); if (!t) return;
+  S.painLevel = Number(t.dataset.lv); renderPain(); saveDraft();
+});
+
+/* ================= voice typing (Hindi / Hinglish) ================= */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, recKey = '', recWant = false;
+const conv = t => SET.script === 'roman' ? toRoman(t) : t;
+function micButtons(k) { return document.querySelectorAll(`[data-mic-for="${k}"]`); }
+function setMicUI(k, on) {
+  micButtons(k).forEach(b => {
+    b.classList.toggle('on', on);
+    if (b.classList.contains('mic')) b.textContent = on ? '⏹' : '🎤';
+    else b.textContent = on ? '⏹️ Bas, ruk jaiye' : (b.dataset.label || b.textContent);
+  });
+  $('listening').classList.toggle('hidden', !on);
+}
+document.querySelectorAll('.btn.micbig').forEach(b => { b.dataset.label = b.textContent; });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-mic-for]'); if (!b) return;
+  e.preventDefault();
+  const k = b.dataset.micFor;
+  if (rec && recKey === k) { stopMic(); return; }
+  startMic(k);
+});
+function startMic(k) {
+  stopMic(); stopRec();
+  if (!SR) { showMicHelp(); return; }
+  const el = document.querySelector(`#scrEntry [data-k="${k}"]`);
+  let base = el.value ? el.value.replace(/\s*$/, ' ') : '';
+  let finals = [];
+  const r = new SR();
+  r.lang = 'hi-IN'; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
+  r.onresult = ev => {
+    let interim = '';
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const t = ev.results[i][0].transcript.trim();
+      if (!t) continue;
+      if (ev.results[i].isFinal) {
+        const lastF = finals[finals.length - 1];
+        if (lastF && t.indexOf(lastF) === 0) finals[finals.length - 1] = t;   // some Android phones repeat text
+        else if (t !== lastF) finals.push(t);
+      } else interim = t;
+    }
+    el.value = base + conv(finals.join(' ')) + (interim ? ' ' + conv(interim) : '');
+    S[k] = el.value; saveDraft();
+  };
+  r.onerror = ev => {
+    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed' || ev.error === 'audio-capture') { recWant = false; showMicHelp(); }
+    else if (ev.error === 'network') { recWant = false; toast('Bolkar likhne ke liye internet chahiye.'); }
+  };
+  r.onend = () => {
+    if (recWant && rec === r) {
+      base = el.value ? el.value.replace(/\s*$/, ' ') : ''; finals = [];
+      try { r.start(); return; } catch (err) { /* fall through */ }
+    }
+    if (rec === r) { rec = null; recKey = ''; setMicUI(k, false); }
+  };
+  try { r.start(); } catch (err) { showMicHelp(); return; }
+  rec = r; recKey = k; recWant = true;
+  setMicUI(k, true);
+}
+function stopMic() {
+  if (!rec) return;
+  const r = rec, k = recKey;
+  recWant = false; rec = null; recKey = '';
+  try { r.stop(); } catch (e) {}
+  setMicUI(k, false);
+}
+function showMicHelp() { $('micHelp').classList.remove('hidden'); }
+$('micHelpOk').onclick = () => $('micHelp').classList.add('hidden');
+
+/* ================= voice memo (her own voice, saved to Drive) ================= */
+let mr = null, mrTimer = null, mrStart = 0;
+function fmt(s) { return Math.floor(s / 60) + ':' + pad(s % 60); }
+function renderVoice() {
+  const box = $('vmBox');
+  if (mr) {
+    box.innerHTML = `<div class="rectime" id="recTime">🔴 0:00</div><button class="btn" id="vmStop" style="background:var(--rec)">⏹️ Recording roko</button>`;
+    $('vmStop').onclick = stopRec; return;
+  }
+  if (S.voice) {
+    box.innerHTML = `<audio controls id="vmAudio"></audio><div class="row" style="margin-top:6px">
+      <button class="btn ghost small" id="vmRedo">🔁 Dobara bolein</button><button class="btn ghost small" id="vmDel">🗑️ Hatayein</button></div>`;
+    loadMedia(S.voice).then(src => setAudio($('vmAudio'), src)).catch(() => {});
+    $('vmRedo').onclick = startRec;
+    $('vmDel').onclick = () => { if (confirm('Awaaz hata dein?')) { S.voice = ''; renderVoice(); saveDraft(); } };
+    return;
+  }
+  box.innerHTML = `<button class="btn" id="vmStart">🎙️ Bolna shuru karein</button>`;
+  $('vmStart').onclick = startRec;
+}
+async function startRec() {
+  stopMic();
+  if (!navigator.mediaDevices || !window.MediaRecorder) { toast('Is phone pe awaaz record nahi ho sakti.'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (e) { showMicHelp(); return; }
+  const type = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+  const chunks = [];
+  const m = new MediaRecorder(stream, type ? { mimeType: type, audioBitsPerSecond: 32000 } : {});
+  m.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  m.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    clearInterval(mrTimer);
+    const base = (m.mimeType || type || 'audio/webm').split(';')[0];
+    const blob = new Blob(chunks, { type: base });
+    mr = null;
+    if (blob.size < 1500) { renderVoice(); return; }
+    const fr = new FileReader();
+    fr.onload = () => { S.voice = fr.result; renderVoice(); saveDraft(); toast('Awaaz save ho gayi 👍'); };
+    fr.readAsDataURL(blob);
+  };
+  mr = m; m.start(1000); mrStart = Date.now();
+  renderVoice();
+  mrTimer = setInterval(() => {
+    const s = Math.floor((Date.now() - mrStart) / 1000);
+    const el = $('recTime'); if (el) el.textContent = '🔴 ' + fmt(s) + ' / 3:00';
+    if (s >= 180) stopRec();
+  }, 500);
+}
+function stopRec() { if (mr && mr.state !== 'inactive') mr.stop(); }
+
+/* ================= photo ================= */
+function renderPhoto() {
+  const box = $('photoBox');
+  $('rmPhoto').classList.toggle('hidden', !S.photo);
+  if (!S.photo) { box.innerHTML = '<div class="ph"><span class="em">🙂</span>Abhi koi photo nahi</div>'; return; }
+  box.innerHTML = '<div class="ph">Photo aa rahi hai…</div>';
+  const want = S.photo;
+  loadMedia(want).then(src => { if (S.photo === want) box.innerHTML = `<img src="${src}" alt="Aaj ki photo">`; })
+    .catch(() => { box.innerHTML = '<div class="ph">Photo nahi khul paayi</div>'; });
+}
+$('camBtn').onclick = () => $('camInput').click();
+$('galBtn').onclick = () => $('galInput').click();
+$('rmPhoto').onclick = () => { S.photo = ''; renderPhoto(); saveDraft(); };
+[$('camInput'), $('galInput')].forEach(inp => inp.addEventListener('change', () => {
+  const f = inp.files && inp.files[0]; inp.value = '';
+  if (!f) return;
+  overlay('Photo taiyaar ho rahi hai…');
+  shrinkImage(f, 1280, 0.78).then(d => { hideOverlay(); S.photo = d; renderPhoto(); saveDraft(); })
+    .catch(() => { hideOverlay(); toast('Ye photo nahi lag paayi. Doosri try karein.'); });
+}));
+function shrinkImage(file, max, q) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const r = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(); };
+    img.src = url;
+  });
+}
+
+/* ================= hand-writing canvas ================= */
+const cv = $('cv');
+let cx = null, cvW = 0, cvH = 0, strokes = [], cur = null, bgImg = null, drawDirty = false, penColor = '#2A2622';
+const PENS = ['#2A2622', '#1F5FAF', '#C0392B', '#2F7D5B'];
+$('pens').insertAdjacentHTML('afterbegin', PENS.map((c, i) => `<button class="pen${i === 0 ? ' on' : ''}" data-pen="${c}" style="background:${c}" aria-label="Pen ka rang"></button>`).join(''));
+$('pens').addEventListener('click', e => {
+  const p = e.target.closest('[data-pen]'); if (!p) return;
+  penColor = p.dataset.pen;
+  document.querySelectorAll('.pen').forEach(x => x.classList.toggle('on', x === p));
+});
+function resetCanvas() { strokes = []; bgImg = null; drawDirty = false; cv.dataset.ready = ''; }
+function initCanvas() {
+  if (cv.dataset.ready) return;
+  const w = cv.parentElement.clientWidth; if (!w) return;
+  cvW = w; cvH = Math.round(w * 1.15);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = cvW * dpr; cv.height = cvH * dpr;
+  cv.style.width = cvW + 'px'; cv.style.height = cvH + 'px';
+  cx = cv.getContext('2d'); cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cx.lineCap = 'round'; cx.lineJoin = 'round';
+  cv.dataset.ready = '1';
+  redraw();
+  if (S.drawing && !bgImg) {
+    loadMedia(S.drawing).then(src => {
+      const im = new Image(); im.onload = () => { bgImg = im; redraw(); }; im.src = src;
+    }).catch(() => toast('Purana haath ka panna nahi khul paaya.'));
+  }
+}
+function paper() {
+  cx.fillStyle = '#FFFFFF'; cx.fillRect(0, 0, cvW, cvH);
+  cx.strokeStyle = '#E6EEF5'; cx.lineWidth = 1;
+  for (let y = 44; y < cvH; y += 36) { cx.beginPath(); cx.moveTo(12, y); cx.lineTo(cvW - 12, y); cx.stroke(); }
+}
+function redraw() {
+  if (!cx) return;
+  paper();
+  if (bgImg) cx.drawImage(bgImg, 0, 0, cvW, cvH);
+  strokes.forEach(drawStroke);
+}
+function drawStroke(s) {
+  cx.strokeStyle = s.c; cx.lineWidth = 3.2; cx.beginPath();
+  s.p.forEach(([x, y], i) => i ? cx.lineTo(x, y) : cx.moveTo(x, y));
+  if (s.p.length === 1) cx.lineTo(s.p[0][0] + 0.1, s.p[0][1]);
+  cx.stroke();
+}
+function pt(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+cv.addEventListener('pointerdown', e => { e.preventDefault(); cv.setPointerCapture(e.pointerId); cur = { c: penColor, p: [pt(e)] }; strokes.push(cur); drawStroke(cur); });
+cv.addEventListener('pointermove', e => {
+  if (!cur) return; e.preventDefault();
+  const p = pt(e), l = cur.p[cur.p.length - 1];
+  cur.p.push(p);
+  cx.strokeStyle = cur.c; cx.lineWidth = 3.2; cx.beginPath(); cx.moveTo(l[0], l[1]); cx.lineTo(p[0], p[1]); cx.stroke();
+});
+const endStroke = () => { if (cur) { cur = null; drawDirty = true; saveDraft(); } };
+cv.addEventListener('pointerup', endStroke);
+cv.addEventListener('pointercancel', endStroke);
+$('undoBtn').onclick = () => { if (strokes.length) { strokes.pop(); drawDirty = true; redraw(); saveDraft(); } };
+$('clearBtn').onclick = () => {
+  if (!strokes.length && !bgImg) return;
+  if (!confirm('Poora panna saaf kar dein?')) return;
+  strokes = []; bgImg = null; drawDirty = true; redraw(); saveDraft();
+};
+function exportDrawing() {
+  if (!cx || (!strokes.length && !bgImg)) return '';
+  return cv.toDataURL('image/jpeg', 0.85);
+}
+function setTab(t) {
+  $('tabType').classList.toggle('on', t === 'type');
+  $('tabDraw').classList.toggle('on', t === 'draw');
+  $('typePane').classList.toggle('hidden', t !== 'type');
+  $('drawPane').classList.toggle('hidden', t !== 'draw');
+  if (t === 'draw') { stopMic(); requestAnimationFrame(initCanvas); }
+}
+$('tabType').onclick = () => setTab('type');
+$('tabDraw').onclick = () => setTab('draw');
+
+/* ================= review + save ================= */
+function painText(e) {
+  const p = painOf(e.painArea); if (!p) return '';
+  if (p.k === 'None') return p.l;
+  return p.l + (Number(e.painLevel) ? ' — ' + LEVELS[e.painLevel - 1][0] : '') + (e.painNote ? '\n' + e.painNote : '');
+}
+function renderReview() {
+  if (drawDirty) S.drawing = exportDrawing();
+  const m = moodOf(S.mood);
+  const rows = [
+    ['Mann', m ? m.e + ' ' + m.l : '', 0],
+    ['Khaas', eventText(S), 0],
+    ['Jawab', S.moodAnswer, 1],
+    ['Exercise', S.exercise ? (S.exercise === 'Yes' ? 'Haan' : 'Nahi') + (S.exerciseNote ? ' — ' + S.exerciseNote : '') : '', 0],
+    ['Paani', S.water ? S.water + ' glass' : '', 0],
+    ['Dard', painText(S), 0],
+    ['Nashta', S.breakfast, 2], ['Dopahar', S.lunch, 2], ['Raat', S.dinner, 2],
+    ['Achha', S.good, 3], ['Dukh', S.sorrow, 3], ['Pachhtava', S.guilt, 3], ['Bura laga', S.disgust, 3],
+    ['Kahani', [S.writing, S.drawing ? '✍️ Haath ka panna' : '', S.voice ? '🎙️ Awaaz save hai' : ''].filter(Boolean).join('\n'), 4],
+    ['Photo', S.photo ? '✓ Lag gayi' : '', 5]
+  ];
+  $('review').innerHTML = rows.map(([k, v, s]) =>
+    `<div class="rv"><div class="k">${k}</div><div class="v${v ? '' : ' empty'}">${v ? esc(v) : 'Khaali'}</div><button class="ch" data-go="${s}">Badlein</button></div>`).join('');
+}
+$('review').addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (!g) return;
+  step = Number(g.dataset.go); renderStep();
+});
+
+function saveDay() {
+  if (mr) { toast('Pehle recording rokiye ⏹️'); return; }
+  stopMic();
+  clearTimeout(draftT); writeDraft();
+  const m = moodOf(S.mood);
+  const payload = Object.assign({}, S, { moodQuestion: m ? m.q : '' });
+  overlay('Aapka din save ho raha hai…');
+  api('saveEntry', PIN, payload).then(() => {
+    hideOverlay();
+    store.del('diary-draft-' + S.date);
+    learnWords();
+    drawDirty = false;
+    showDone(Object.assign({}, S));
+  }).catch(e => handleErr(e, 'Save nahi hua. Aapka likha phone pe safe hai — internet check karke dobara Save dabaiye.'));
+}
+
+function daySummary(e) {
+  const L = [], m = moodOf(e.mood), p = painOf(e.painArea);
+  if (m) L.push(`${m.e} ${e.date === todayStr() ? 'Aaj' : 'Us din'} aap <b>${m.adj}</b> thin.`);
+  if (isSpecial(e.event)) L.push(`⭐ Khaas: ${esc(eventText(e)).replace(/\n/g, ' — ')}`);
+  if (e.water) L.push(`💧 ${e.water} glass paani piya${e.water >= 8 ? ' — shabaash!' : e.water < 5 ? ' — kal thoda aur piyiye.' : '.'}`);
+  if (e.exercise === 'Yes') L.push(`🚶‍♀️ Walk / exercise ki${e.exerciseNote ? ' (' + esc(e.exerciseNote) + ')' : ''} — bahut badhiya!`);
+  else if (e.exercise === 'No') L.push('🪑 Exercise nahi hui — koi baat nahi.');
+  if (p && p.k === 'None') L.push('🙂 Koi dard nahi tha.');
+  else if (p) L.push(`🩹 ${esc(p.l)} mein ${e.painLevel ? LEVELS[e.painLevel - 1][0].toLowerCase() + ' ' : ''}dard tha.`);
+  if (e.good) L.push(`🌸 Achhi baat: “${esc(e.good)}”`);
+  return L;
+}
+function showDone(e) {
+  $('doneMsg').textContent = DONE_MSGS[Math.floor(Math.random() * DONE_MSGS.length)];
+  const L = daySummary(e);
+  $('doneSummary').innerHTML = `<h3>📝 Aaj ka din ek nazar mein</h3>` + (L.length ? L.map(x => `<p>${x}</p>`).join('') : '<p>Aapne aaj ki yaad save ki. 🌼</p>');
+  $('doneMemory').innerHTML = '';
+  show('scrDone');
+  api('listEntries', PIN).then(list => {
+    LIST = list || [];
+    const mem = findMemory(e.date);
+    if (mem) $('doneMemory').innerHTML = memoryCard(mem);
+  }).catch(() => {});
+}
+$('doneHome').onclick = goHome;
+
+/* ================= view a day ================= */
+let viewing = '';
+function openView(date) {
+  viewing = date;
+  $('viewTitle').textContent = niceY(date);
+  $('viewBody').innerHTML = '<div class="loading">Khul raha hai…</div>';
+  show('scrView');
+  api('getEntry', PIN, date).then(e => {
+    if (!e) { $('viewBody').innerHTML = '<div class="loading">Is din kuch nahi likha.</div>'; return; }
+    const m = moodOf(e.mood);
+    const sec = (lab, txt) => txt ? `<div class="vsec"><div class="lab">${lab}</div><div class="txt">${esc(txt)}</div></div>` : '';
+    let h = '';
+    h += `<div class="card" style="text-align:center"><div style="font-size:3.4rem">${m ? m.e : '📄'}</div><h2>${m ? m.l : 'Mera din'}</h2>
+      ${e.moodQuestion ? `<p class="sub" style="margin:4px 0 8px">${esc(e.moodQuestion)}</p>` : ''}
+      ${e.moodAnswer ? `<div class="txt" style="white-space:pre-wrap">${esc(e.moodAnswer)}</div>` : ''}</div>`;
+    const fest = FESTIVALS[e.date];
+    if (fest || isSpecial(e.event) || e.eventNote) h += `<div class="card"><h3>⭐ Us din ka khaas</h3>${fest ? `<p class="sub" style="margin:0 0 6px">${fest.map(([n, x]) => x + ' ' + n).join(', ')}</p>` : ''}${eventText(e) ? `<div class="txt" style="white-space:pre-wrap">${esc(eventText(e))}</div>` : ''}</div>`;
+    const sum = daySummary(e);
+    if (sum.length) h += `<div class="card summary"><h3>📝 Ek nazar mein</h3>${sum.map(x => `<p>${x}</p>`).join('')}</div>`;
+    if (e.photo) h += `<div class="card"><img class="vimg" id="vPhoto" alt="Us din ki photo"></div>`;
+    if (e.voice) h += `<div class="card"><h3>🎙️ Us din aapki awaaz</h3><audio controls id="vVoice"></audio></div>`;
+    const food = [sec('☀️ Nashta', e.breakfast), sec('🍛 Dopahar', e.lunch), sec('🌙 Raat', e.dinner), sec('🩹 Dard', painText(e))].join('');
+    if (food) h += `<div class="card">${food}</div>`;
+    const feel = [sec('🌸 Achhi baat', e.good), sec('💧 Dukh', e.sorrow), sec('😔 Pachhtava', e.guilt), sec('😖 Bura laga', e.disgust)].join('');
+    if (feel) h += `<div class="card">${feel}</div>`;
+    if (e.writing || e.drawing) h += `<div class="card">${sec('📖 Aaj ki kahani', e.writing)}${e.drawing ? '<img class="vimg" id="vDraw" alt="Haath ka panna">' : ''}</div>`;
+    $('viewBody').innerHTML = h;
+    if (e.photo) loadMedia(e.photo).then(s => { const el = $('vPhoto'); if (el) el.src = s; }).catch(() => {});
+    if (e.drawing) loadMedia(e.drawing).then(s => { const el = $('vDraw'); if (el) el.src = s; }).catch(() => {});
+    if (e.voice) loadMedia(e.voice).then(s => setAudio($('vVoice'), s)).catch(() => {});
+  }).catch(e => handleErr(e, 'Ye din nahi khul paaya. Internet check karein.'));
+}
+$('viewBack').onclick = goHome;
+$('editBtn').onclick = () => openEntry(viewing);
+
+/* ================= photos timeline ================= */
+function openPhotos() {
+  show('scrPhotos');
+  const withPhoto = LIST.filter(x => x.photo);
+  if (!withPhoto.length) { $('pgrid').innerHTML = '<div class="loading" style="grid-column:1/-1">Abhi koi photo nahi. Roz ek photo lijiye — yahan aapki yaadein jamaa hongi. 📸</div>'; return; }
+  $('pgrid').innerHTML = withPhoto.map(x => {
+    const m = moodOf(x.mood), d = fromYmd(x.date);
+    return `<button class="pcell" data-open="${x.date}"><img id="pc${x.date}" alt=""><span>${m ? m.e + ' ' : ''}${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</span></button>`;
+  }).join('');
+  let i = 0;
+  const next = () => {
+    if (i >= withPhoto.length || $('scrPhotos').classList.contains('hidden')) return;
+    const x = withPhoto[i++];
+    loadMedia(x.photo, true).then(src => { const el = $('pc' + x.date); if (el) el.src = src; }).catch(() => {}).then(next);
+  };
+  next(); next(); next();
+}
+$('photosBack').onclick = goHome;
+
+/* ================= settings ================= */
+function openSettings() {
+  document.querySelectorAll('#optScript button').forEach(b => b.classList.toggle('on', b.dataset.v === SET.script));
+  document.querySelectorAll('#optSize button').forEach(b => b.classList.toggle('on', b.dataset.v === SET.size));
+  document.querySelectorAll('#optTheme button').forEach(b => b.classList.toggle('on', b.dataset.v === SET.theme));
+  show('scrSet');
+}
+$('optScript').addEventListener('click', e => {
+  const b = e.target.closest('[data-v]'); if (!b) return;
+  SET.script = b.dataset.v; store.set('diary-script', SET.script); openSettings();
+});
+$('optSize').addEventListener('click', e => {
+  const b = e.target.closest('[data-v]'); if (!b) return;
+  SET.size = b.dataset.v; store.set('diary-size', SET.size);
+  document.documentElement.classList.toggle('big', SET.size === 'b'); openSettings();
+});
+$('optTheme').addEventListener('click', e => {
+  const b = e.target.closest('[data-v]'); if (!b) return;
+  SET.theme = b.dataset.v; store.set('diary-theme', SET.theme); applyTheme(); openSettings();
+});
+$('lockBtn').onclick = () => { PIN = ''; store.del('diary-pin'); showPin(); };
+$('setBack').onclick = goHome;
+
+/* ================= start ================= */
+if (MODE === 'http' && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+if (PIN) {
+  api('login', PIN).then(goHome).catch(e => { if (isWrongPin(e)) { PIN = ''; store.del('diary-pin'); } showPin(); });
+} else showPin();
+</script>
+</body>
+</html>
