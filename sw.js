@@ -1,6 +1,6 @@
 // Meri Diary — keeps the app screen available even on weak internet.
 // Diary data itself always goes to Google Sheets; this only caches the app files.
-const CACHE = 'meri-diary-v3';
+const CACHE = 'meri-diary-v4';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
