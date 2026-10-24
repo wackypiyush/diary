@@ -249,6 +249,15 @@ audio{width:100%;margin:6px 0}
     </div>
   </section>
 
+  <!-- NOT LINKED -->
+  <section id="scrLink" class="hidden">
+    <div class="pin-wrap">
+      <div style="font-size:3.2rem">🔗</div>
+      <h1>Ye phone abhi juda nahi hai</h1>
+      <p class="sub">Diary kholne ke liye ek baar <b>setup link</b> is phone pe kholiye. Jisne app set kiya hai, unse link maangiye.</p>
+    </div>
+  </section>
+
   <!-- HOME -->
   <section id="scrHome" class="hidden">
     <div class="homehead">
@@ -516,11 +525,21 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxbaK0B_GLAa8thZFothG5u
 const HAS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
 const MODE = HAS_GAS ? 'gas' : (API_URL ? 'http' : 'mock');
 
+// Secret key: arrives once via the setup link (#k=...), then lives only on this phone.
+let KEY = '';
+try {
+  const m = location.hash.match(/[#&]k=([A-Za-z0-9]{20,})/);
+  if (m) { localStorage.setItem('diary-key', m[1]); history.replaceState(null, '', location.pathname + location.search); }
+  KEY = localStorage.getItem('diary-key') || '';
+} catch (e) {}
+window.addEventListener('hashchange', () => { if (/[#&]k=/.test(location.hash)) location.reload(); });
+
 function api(fn, ...args) {
   if (MODE === 'gas') {
     return new Promise((res, rej) => { google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args); });
   }
   if (MODE === 'http') {
+    args = [KEY + '|' + args[0], ...args.slice(1)];
     return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) })
       .then(r => { if (!r.ok) throw new Error('Network'); return r.json(); })
       .then(j => { if (!j.ok) throw new Error(j.error); return j.data; });
@@ -679,6 +698,8 @@ const painOf = k => k ? PAINS.find(p => p.k === k || p.old === k || p.l === k) |
 const errTxt = e => String((e && e.message) || e);
 const isWrongPin = e => errTxt(e).indexOf('Wrong PIN') >= 0;
 const isLocked = e => errTxt(e).indexOf('Locked') >= 0;
+const isNotLinked = e => errTxt(e).indexOf('Not linked') >= 0;
+function showLink() { KEY = ''; store.del('diary-key'); show('scrLink'); }
 
 const SET = { script: store.get('diary-script') || 'roman', size: store.get('diary-size') || 'n', theme: store.get('diary-theme') || 'auto' };
 document.documentElement.classList.toggle('big', SET.size === 'b');
@@ -699,7 +720,7 @@ let step = 0;
 let calMonth = new Date(); calMonth.setDate(1);
 const mediaCache = {};
 
-const SCREENS = ['scrPin', 'scrHome', 'scrEntry', 'scrView', 'scrDone', 'scrPhotos', 'scrSet'];
+const SCREENS = ['scrLink', 'scrPin', 'scrHome', 'scrEntry', 'scrView', 'scrDone', 'scrPhotos', 'scrSet'];
 function show(id) {
   if (id !== 'scrEntry') { stopMic(); stopRec(); }
   SCREENS.forEach(s => $(s).classList.toggle('hidden', s !== id));
@@ -716,6 +737,7 @@ function toast(msg) {
 }
 function handleErr(e, msg) {
   hideOverlay();
+  if (isNotLinked(e)) { showLink(); return; }
   if (isWrongPin(e)) { PIN = ''; store.del('diary-pin'); showPin(); return; }
   if (isLocked(e)) { toast('Bahut baar galat PIN. 15 minute baad try karein.'); return; }
   toast(msg || 'Kuch gadbad hui. Internet check karke dobara try karein.');
@@ -764,6 +786,7 @@ function tryPin(p) {
     hideOverlay(); PIN = p; store.set('diary-pin', p); goHome();
   }).catch(e => {
     hideOverlay();
+    if (isNotLinked(e)) { showLink(); return; }
     if (isWrongPin(e)) {
       $('pinErr').textContent = 'PIN galat hai. Dobara daaliye.';
       $('pinDots').classList.remove('shake'); void $('pinDots').offsetWidth; $('pinDots').classList.add('shake');
@@ -1474,8 +1497,13 @@ $('setBack').onclick = goHome;
 
 /* ================= start ================= */
 if (MODE === 'http' && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
-if (PIN) {
-  api('login', PIN).then(goHome).catch(e => { if (isWrongPin(e)) { PIN = ''; store.del('diary-pin'); } showPin(); });
+if (MODE === 'http' && !KEY) showLink();
+else if (PIN) {
+  api('login', PIN).then(goHome).catch(e => {
+    if (isNotLinked(e)) return showLink();
+    if (isWrongPin(e)) { PIN = ''; store.del('diary-pin'); }
+    showPin();
+  });
 } else showPin();
 </script>
 </body>
